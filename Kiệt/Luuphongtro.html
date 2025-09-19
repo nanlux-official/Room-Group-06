@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phòng trọ – Lưu phòng</title>
+  <style>
+    :root{ --gap:14px; --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.08); }
+    *{ box-sizing:border-box }
+    body{ margin:0; font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif; background:#f7f7f9; color:#111 }
+    h1{ margin:0 0 16px }
+    h2{ margin:18px 0 12px }
+    .container{ max-width:1100px; margin:0 auto; padding:24px }
+
+    .toolbar{
+      display:grid; grid-template-columns:1fr 180px 180px 160px 120px;
+      gap:var(--gap); margin:10px 0 20px
+    }
+    input,select,button{
+      font-size:14px; padding:10px 12px; border:1px solid #ddd; border-radius:10px
+    }
+    button{ background:#111; color:#fff; cursor:pointer }
+    button.secondary{ background:#fff; color:#111; border:1px solid #ccc }
+
+    .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--gap) }
+    .grid-fav .card img{ height:120px }
+
+    .card{
+      background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+      overflow:hidden; display:flex; flex-direction:column
+    }
+    .card img{ width:100%; height:180px; object-fit:cover }
+    .card .body{ padding:14px; display:flex; flex-direction:column; gap:8px }
+    .badge{ display:inline-block; padding:4px 8px; border-radius:999px; background:#f0f0f0; font-size:12px }
+    .row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+    .actions{ display:flex; gap:8px; margin-top:6px }
+
+    .favorites-block{
+      margin-top:26px; background:#fff; border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:16px
+    }
+    .empty{ color:#666; font-style:italic }
+
+    .pagination{
+      display:flex; align-items:center; gap:8px; justify-content:center;
+      margin:14px 0 8px;
+    }
+    .pagination button{ min-width:36px; padding:8px 12px }
+    .pagination .page{
+      padding:6px 10px; border:1px solid #ddd; border-radius:8px; cursor:pointer; user-select:none;
+    }
+    .pagination .page.active{ background:#111; color:#fff; border-color:#111 }
+    .page-size{ display:flex; align-items:center; gap:6px; margin-left:12px }
+
+    .toast{ position:fixed; bottom:18px; right:18px; background:#111; color:#fff; padding:10px 14px; border-radius:10px; opacity:0; transform:translateY(10px); transition:.25s; z-index:60 }
+    .toast.show{ opacity:1; transform:translateY(0) }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr 1fr }
+      .toolbar{ grid-template-columns:1fr 1fr 1fr 1fr 1fr }
+    }
+    @media (max-width: 640px){
+      .grid{ grid-template-columns:1fr }
+      .toolbar{ grid-template-columns:1fr 1fr }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Website Tìm Phòng Trọ – Lưu phòng</h1>
+
+    <div class="toolbar">
+      <input id="q" placeholder="Tìm theo tên/địa chỉ…">
+      <select id="area">
+        <option value="">-- Khu vực --</option>
+        <option>Hải Châu</option><option>Thanh Khê</option>
+        <option>Sơn Trà</option><option>Liên Chiểu</option>
+      </select>
+      <select id="price">
+        <option value="">-- Giá --</option>
+        <option value="asc">Giá tăng dần</option>
+        <option value="desc">Giá giảm dần</option>
+        <option value="range:0-3">0–3 triệu</option>
+        <option value="range:3-6">3–6 triệu</option>
+      </select>
+      <select id="status">
+        <option value="">-- Trạng thái --</option>
+        <option value="available">Còn phòng</option>
+        <option value="unavailable">Hết phòng</option>
+      </select>
+      <button id="btnSearch">Tìm</button>
+    </div>
+
+    <h2>Danh sách phòng</h2>
+    <div id="rooms" class="grid"></div>
+    <div id="pager" class="pagination">
+      <button id="pgPrev">«</button>
+      <span id="pgNumbers"></span>
+      <button id="pgNext">»</button>
+
+      <div class="page-size">
+        <label for="pgSize">Hiển thị:</label>
+        <select id="pgSize">
+          <option value="6" selected>6</option>
+          <option value="9">9</option>
+          <option value="12">12</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="favorites-block">
+      <h2>Phòng đã lưu</h2>
+      <div id="favEmpty" class="empty">Chưa có phòng nào được lưu.</div>
+      <div id="favGrid" class="grid grid-fav"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const ROOMS = Array.from({length:42}).map((_,i)=>({
+      id: i+1,
+      title: `Phòng số ${i+1}`,
+      address: ['Hải Châu','Thanh Khê','Sơn Trà','Liên Chiểu'][i%4] + ', Đà Nẵng',
+      price: (i%6 + 1) * 1_000_000,
+      available: i%3 !== 0,
+      image: `https://picsum.photos/seed/room${i}/600/400`
+    }))
+
+    const $  = s => document.querySelector(s)
+    const roomsEl  = $('#rooms')
+    const favGrid  = $('#favGrid')
+    const favEmpty = $('#favEmpty')
+    const toast    = $('#toast')
+    const pgPrev   = $('#pgPrev')
+    const pgNext   = $('#pgNext')
+    const pgNumbers= $('#pgNumbers')
+    const pgSizeEl = $('#pgSize')
+    const favSet = new Set(JSON.parse(localStorage.getItem('favorites') || '[]'))
+    let currentPage = 1
+    let pageSize    = Number(pgSizeEl?.value || 6)
+    let cachedFiltered = []  
+
+    function saveFav(){ localStorage.setItem('favorites', JSON.stringify([...favSet])) }
+    function formatVND(v){ return v.toLocaleString('vi-VN') }
+    function filterRooms(){
+      let arr = [...ROOMS]
+      const q = $('#q').value.trim().toLowerCase()
+      const area = $('#area').value
+      const price = $('#price').value
+      const status = $('#status').value
+
+      if(q) arr = arr.filter(x => (x.title + x.address).toLowerCase().includes(q))
+      if(area) arr = arr.filter(x => x.address.includes(area))
+      if(price){
+        if(price === 'asc') arr.sort((a,b)=>a.price-b.price)
+        else if(price === 'desc') arr.sort((a,b)=>b.price-a.price)
+        else if(price.startsWith('range:')){
+          const [min,max] = price.replace('range:','').split('-').map(Number)
+          arr = arr.filter(x => x.price >= min*1e6 && x.price <= max*1e6)
+        }
+      }
+      if(status){
+        if(status==='available') arr = arr.filter(x=>x.available)
+        if(status==='unavailable') arr = arr.filter(x=>!x.available)
+      }
+      return arr.map(x => ({ ...x, isFavorite: favSet.has(x.id) }))
+    }
+    function paginate(arr, page, size){
+      const total = arr.length
+      const pages = Math.max(1, Math.ceil(total / size))
+      const p = Math.min(Math.max(1, page), pages)
+      const start = (p-1)*size
+      const end   = start + size
+      return { slice: arr.slice(start, end), page: p, pages, total }
+    }
+
+    function renderPager(pages, page){
+      pgNumbers.innerHTML = ''
+      const maxBtns = 7
+      const makeBtn = (label, p, active=false) => {
+        const span = document.createElement('span')
+        span.className = 'page' + (active ? ' active' : '')
+        span.textContent = label
+        span.dataset.page = p
+        return span
+      }
+
+      let start = Math.max(1, page - 3)
+      let end   = Math.min(pages, start + maxBtns - 1)
+      start     = Math.max(1, end - maxBtns + 1)
+
+      if(start > 1){
+        pgNumbers.appendChild(makeBtn('1', 1, page===1))
+        if(start > 2){
+          const dots = document.createElement('span')
+          dots.textContent = '…'; dots.style.margin = '0 4px'
+          pgNumbers.appendChild(dots)
+        }
+      }
+      for(let p = start; p <= end; p++){
+        pgNumbers.appendChild(makeBtn(String(p), p, p===page))
+      }
+      if(end < pages){
+        if(end < pages-1){
+          const dots = document.createElement('span')
+          dots.textContent = '…'; dots.style.margin = '0 4px'
+          pgNumbers.appendChild(dots)
+        }
+        pgNumbers.appendChild(makeBtn(String(pages), pages, page===pages))
+      }
+
+      pgPrev.disabled = page <= 1
+      pgNext.disabled = page >= pages
+    }
+    function renderRooms(){
+      cachedFiltered = filterRooms()
+      const { slice, page, pages } = paginate(cachedFiltered, currentPage, pageSize)
+      currentPage = page
+      roomsEl.innerHTML = ''
+      slice.forEach(room => roomsEl.appendChild(roomCard(room)))
+      renderPager(pages, page)
+    }
+    function renderFavorites(){
+      favGrid.innerHTML = ''
+      const items = [...favSet].map(id => ROOMS.find(r=>r.id===id)).filter(Boolean)
+      if(items.length === 0){ favEmpty.style.display = 'block'; return }
+      favEmpty.style.display = 'none'
+      items.forEach(room => favGrid.appendChild(roomCard(room, true)))
+    }
+    function roomCard(room, isFavoriteSection=false){
+      const el = document.createElement('div')
+      el.className = 'card'
+      el.innerHTML = `
+        <img src="${room.image}" alt="Ảnh ${room.title}">
+        <div class="body">
+          <h3>${room.title}</h3>
+          <div class="row">
+            <span class="badge">${room.address}</span>
+            <span class="badge">${room.available ? 'Còn phòng' : 'Hết phòng'}</span>
+          </div>
+          <strong>${formatVND(room.price)}/tháng</strong>
+          <div class="actions">
+            ${isFavoriteSection
+              ? `<button class="secondary" data-action="removeFav" data-id="${room.id}">Xoá khỏi lưu</button>`
+              : `<button data-action="fav" data-id="${room.id}">${favSet.has(room.id) ? '♥ Bỏ lưu' : '♡ Lưu'}</button>`
+            }
+          </div>
+        </div>
+      `
+      el.addEventListener('click', (e)=>{
+        const btn = e.target.closest('button')
+        if(!btn) return
+        const id = Number(btn.dataset.id)
+        const action = btn.dataset.action
+        if(action === 'fav'){ toggleFavorite(id) }
+        else if(action === 'removeFav'){ favSet.delete(id); saveFav(); refreshAfterFav() ; showToast('Đã xoá khỏi yêu thích') }
+      })
+      return el
+    }
+
+    function refreshAfterFav(){
+      const { pages } = paginate(filterRooms(), currentPage, pageSize)
+      if(currentPage > pages) currentPage = pages
+      saveFav(); renderRooms(); renderFavorites()
+    }
+
+    function toggleFavorite(id){
+      if(favSet.has(id)){ favSet.delete(id); showToast('Đã bỏ lưu phòng') }
+      else { favSet.add(id); showToast('Đã lưu phòng vào yêu thích') }
+      refreshAfterFav()
+    }
+    $('#btnSearch').addEventListener('click', ()=>{ currentPage = 1; renderRooms() })
+    pgPrev.addEventListener('click', ()=>{ if(currentPage>1){ currentPage--; renderRooms() } })
+    pgNext.addEventListener('click', ()=>{
+      const { pages } = paginate(cachedFiltered, currentPage, pageSize)
+      if(currentPage<pages){ currentPage++; renderRooms() }
+    })
+    pgNumbers.addEventListener('click', (e)=>{
+      const p = e.target.dataset.page
+      if(!p) return
+      currentPage = Number(p); renderRooms()
+    })
+    pgSizeEl.addEventListener('change', ()=>{
+      pageSize = Number(pgSizeEl.value || 6)
+      currentPage = 1
+      renderRooms()
+    })
+
+
+    let toastTimer = null
+    function showToast(msg){
+      toast.textContent = msg
+      toast.classList.add('show')
+      clearTimeout(toastTimer)
+      toastTimer = setTimeout(()=> toast.classList.remove('show'), 2200)
+    }
+
+    renderRooms()
+    renderFavorites()
+  </script>
+</body>
+</html>
