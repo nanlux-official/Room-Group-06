@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Trang chủ - Mẫu giống PDF</title>
+    <style>
+      :root {
+        --accent: #0b84ff;
+        --muted: #666;
+        --card: #fff;
+        --bg: #f5f6f8;
+        --header: #ff7b00;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        background: var(--bg);
+        color: #111;
+      }
+      header {
+        background: var(--header);
+        color: #fff;
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 20px;
+      }
+      .auth {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: 1px solid #eee;
+        background: #fff;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 0 16px;
+      }
+
+      /* search area */
+      .search-area {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .search-box {
+        flex: 1;
+        background: var(--card);
+        padding: 14px;
+        border-radius: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        box-shadow: 0 6px 18px rgba(10, 20, 40, 0.04);
+      }
+      .search-input {
+        flex: 1;
+        border: 0;
+        outline: none;
+        font-size: 14px;
+      }
+
+      /* listings */
+      .listings {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(10, 20, 40, 0.04);
+        border: 1px solid #f0f0f0;
+      }
+      .media {
+        height: 150px;
+        background: linear-gradient(135deg, #e6eefc, #f7fbff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .card-body {
+        padding: 12px;
+      }
+      .card-title {
+        font-weight: 700;
+        margin: 0 0 6px;
+      }
+      .card-desc {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .price {
+        margin-left: auto;
+        font-weight: 800;
+        color: #1b7a3a;
+      }
+
+      .more {
+        display: flex;
+        justify-content: center;
+        margin: 18px 0;
+      }
+      .city-filter {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      /* responsive */
+      @media (max-width: 600px) {
+        .search-area {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .media {
+          height: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">Trang Chủ</div>
+      <div class="auth">
+        <button class="btn">đăng nhập</button>
+        <button class="btn primary">đăng tin</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="search-area">
+        <div class="search-box">
+          <input
+            class="search-input"
+            placeholder="thành phố  Tìm nhà  tìm trọ ..."
+          />
+        </div>
+        <div style="min-width: 120px; display: flex; gap: 8px">
+          <button class="btn">Tìm kiếm</button>
+          <button class="btn">Lọc</button>
+        </div>
+      </section>
+
+      <section class="city-filter">
+        <div class="chip">Tân Phú</div>
+        <div class="chip">Quận 9</div>
+        <div class="chip">Gần sân bay</div>
+        <div class="chip">Gần đại học</div>
+      </section>
+
+      <section class="listings" aria-label="Danh sách tin">
+        <!-- Item 1 -->
+        <article class="card">
+          <div class="media">CĂN HỘ DỊCH VỤ - TÂN PHÚ</div>
+          <div class="card-body">
+            <h3 class="card-title">CĂN HỘ DỊCH VỤ TÂN PHÚ CHÍNH CHỦ GÁC ĐÚC</h3>
+            <p class="card-desc">
+              1m8 TÂN HƯƠNG, LÊ THÚC HOẠCH<br />CH dịch vụ sạch tinh, trợ giá,
+              gần sân bay, đại học, công viên
+            </p>
+            <div class="meta">
+              <span>1PN • gác đúc</span>
+              <span class="price">1.8 triệu/tháng</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 2 -->
+        <article class="card">
+          <div class="media">VINHOME GRAND PARK Q9</div>
+          <div class="card-body">
+            <h3 class="card-title">CHO THUÊ CĂN 1PN,2PN,3PN GIÁ TỐT</h3>
+            <p class="card-desc">
+              5 triệu/tháng • 3,9 triệu/tháng • 5 triệu/tháng
+            </p>
+            <div class="meta">
+              <span>Vinhomes Grand Park</span>
+              <span class="price">Xem thêm</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 3 (placeholder) -->
+        <article class="card">
+          <div class="media">Ảnh BĐS</div>
+          <div class="card-body">
+            <h3 class="card-title">Tin cho thuê khác</h3>
+            <p class="card-desc">
+              Mô tả ngắn gọn về bất động sản nằm ở vị trí đẹp, tiện ích xung
+              quanh.
+            </p>
+            <div class="meta">
+              <span>2PN • 3 người</span>
+              <span class="price">4.2 triệu/tháng</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="more">
+        <button class="btn">Xem thêm tin cho thuê</button>
+      </div>
+    </main>
+
+    <script>
+      // small interactive touches
+      document.querySelectorAll(".chip").forEach((c) =>
+        c.addEventListener("click", () => {
+          c.style.background =
+            c.style.background === "#eef6ff" ? "" : "#eef6ff";
+        })
+      );
+    </script>
+  </body>
+</html>
