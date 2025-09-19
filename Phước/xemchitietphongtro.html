@@ -1,0 +1,580 @@
+<!doctype html>
+<html
+  lang="vi"
+>
+<head>
+  <meta
+    charset="utf-8"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <title>
+    Chi tiết phòng trọ
+  </title>
+
+  <style>
+    :root {
+      --bg:      #f6f7f8;
+      --card:    #fff;
+      --text:    #111827;
+      --muted:   #6b7280;
+      --line:    #e5e7eb;
+      --primary: #4caf50;
+      --radius:  12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* ====== TOPBAR mới thêm ====== */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #b99f72;
+      color: #111;
+    }
+
+    .back {
+      all: unset;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #d1fae5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gallery {
+      padding: 12px;
+    }
+
+    .main {
+      aspect-ratio: 16 / 10;
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: #e5e7eb;
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      overflow: auto;
+      padding-bottom: 4px;
+    }
+
+    .thumbs img {
+      width: 88px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: #eee;
+    }
+
+    .thumbs img.active {
+      border-color: var(--primary);
+    }
+
+    .side {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .priceBox {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .price {
+      font-weight: 800;
+      font-size: 22px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta span {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .section {
+      padding: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 700px) {
+      .list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .skeleton {
+      animation: pulse 1.2s ease-in-out infinite;
+      background: linear-gradient(90deg, #eee, #f6f7f8, #eee);
+      background-size: 200% 100%;
+    }
+
+    @keyframes pulse {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .footerNote {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== TOPBAR mới thêm ở đầu trang ===== -->
+  <div
+    class="topbar"
+  >
+    <button
+      class="back"
+      aria-label="Quay lại"
+    >
+      ←
+    </button>
+
+    <div>
+      Chi Tiết Phòng Trọ
+    </div>
+  </div>
+
+  <div
+    class="wrap"
+  >
+    <div
+      class="card"
+    >
+      <!-- HEADER -->
+      <div
+        class="header"
+      >
+        <div
+          class="title"
+          id="room-title"
+        >
+          Chi tiết phòng
+        </div>
+
+        <span
+          class="pill"
+          id="room-availability"
+        >
+          Đang trống
+        </span>
+      </div>
+
+      <div
+        class="grid"
+      >
+        <!-- LEFT: GALLERY + BULLETS -->
+        <div
+          class="gallery"
+        >
+          <img
+            id="img-main"
+            class="main skeleton"
+            alt="Ảnh phòng"
+          />
+
+          <div
+            id="thumbs"
+            class="thumbs"
+            aria-label="Ảnh phụ"
+          ></div>
+
+          <div
+            class="section"
+          >
+            <h3>
+              Thông tin chi tiết
+            </h3>
+
+            <div
+              class="list"
+              id="bullets"
+            ></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: PRICE + META + MÔ TẢ -->
+        <aside
+          class="side"
+        >
+          <div
+            class="priceBox"
+          >
+            <div
+              class="price"
+              id="price"
+            >
+              —
+            </div>
+
+            <div
+              class="meta"
+            >
+              <span
+                title="Địa chỉ"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"
+                  ></path>
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="3"
+                  ></circle>
+                </svg>
+
+                <span
+                  id="address"
+                >
+                  —
+                </span>
+              </span>
+
+              <span
+                title="Diện tích"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <rect
+                    x="3"
+                    y="3"
+                    width="18"
+                    height="18"
+                    rx="2"
+                  ></rect>
+                </svg>
+
+                <span
+                  id="size"
+                >
+                  —
+                </span>
+              </span>
+            </div>
+
+            <div
+              class="actions"
+            >
+              <button
+                id="btn-book"
+                type="button"
+              >
+                Đặt lịch xem phòng
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="section"
+            style="border: none"
+          >
+            <h3>
+              Mô tả
+            </h3>
+
+            <p
+              id="desc"
+              style="margin: 0; color: var(--muted); line-height: 1.6"
+            >
+              —
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <div
+        class="footerNote"
+      >
+        PB07 — Giao diện tối giản. Thay endpoint
+        <code>/api/rooms/:id</code>
+        để kết nối Back-end PHP/MySQL.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tiện ích
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    const text = (sel, v) => { const el = $(sel); if (el) el.textContent = v; };
+
+    // DEMO data
+    const params = new URLSearchParams(location.search);
+    const roomId = params.get('id') || 1;
+
+    const DEMO = {
+      id:          1,
+      title:       "Phòng trọ HÀM NGHI — ĐÀ NẴNG",
+      price_vnd:   3500000,
+      address:     "77 Hàm Nghi, Đà Nẵng",
+      size_m2:     26,
+      available:   true,
+      description: "Phòng rộng rãi, thoáng mát, có ban công nhỏ. Khu yên tĩnh, giờ giấc linh hoạt.",
+      photos: [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1564540583246-934409427776?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?q=80&w=1200&auto=format&fit=crop"
+      ],
+      bullets: [
+        "Lối đi riêng",
+        "Ưu tiên sinh viên/nhân viên",
+        "Gần trạm xe buýt",
+        "Cọc 1 tháng"
+      ]
+    };
+
+    // Định dạng tiền
+    const money = (v) => new Intl.NumberFormat(
+      'vi-VN',
+      { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }
+    ).format(v);
+
+    // Header
+    function renderHeader(room) {
+      text('#room-title', room.title);
+
+      const pill  = $('#room-availability');
+      const avail = !!room.available;
+
+      pill.textContent      = avail ? 'Đang trống' : 'Hết phòng';
+      pill.style.background = avail ? '#ecfdf5' : '#fee2e2';
+      pill.style.color      = avail ? '#065f46' : '#991b1b';
+      pill.style.borderColor= avail ? '#d1fae5' : '#fecaca';
+    }
+
+    // Giá + meta
+    function renderPriceMeta(room) {
+      text('#price',   `${money(room.price_vnd)}/tháng`);
+      text('#address', room.address);
+      text('#size',    `${room.size_m2} m²`);
+      text('#desc',    room.description);
+
+      const btn = $('#btn-book');
+      if (btn) {
+        btn.onclick = () => alert('(Demo) Gửi yêu cầu đặt lịch xem phòng!');
+      }
+    }
+
+    // Gallery
+    function renderGallery(room) {
+      const main   = $('#img-main');
+      const thumbs = $('#thumbs');
+
+      if (!main || !thumbs) return;
+
+      main.src = (room.photos && room.photos[0]) || '';
+      main.classList.remove('skeleton');
+
+      thumbs.innerHTML = '';
+
+      (room.photos || []).forEach((url, i) => {
+        const img = new Image();
+        img.src = url;
+        img.alt = `Ảnh ${i + 1}`;
+        img.loading = 'lazy';
+
+        if (i === 0) img.classList.add('active');
+
+        img.onclick = () => {
+          $$('.thumbs img').forEach(x => x.classList.remove('active'));
+          img.classList.add('active');
+          main.src = url;
+        };
+
+        thumbs.appendChild(img);
+      });
+    }
+
+    // Bullets
+    function renderBullets(room) {
+      const box = $('#bullets');
+      if (!box) return;
+
+      box.innerHTML = '';
+
+      (room.bullets || []).forEach((t) => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = t;
+        box.appendChild(chip);
+      });
+    }
+
+    // Tổng
+    function render(room) {
+      renderHeader(room);
+      renderPriceMeta(room);
+      renderGallery(room);
+      renderBullets(room);
+    }
+
+    // Load dữ liệu
+    async function load() {
+      try {
+        const res = await fetch(
+          `/api/rooms/${roomId}`,
+          { headers: { Accept: 'application/json' } }
+        );
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const data = await res.json();
+        render(data);
+      } catch {
+        render(DEMO);
+      }
+    }
+
+    // Boot + nút Back
+    document.addEventListener('DOMContentLoaded', () => {
+      load();
+      document
+        .querySelector('.back')
+        ?.addEventListener('click', () => history.back());
+    });
+  </script>
+</body>
+</html>
