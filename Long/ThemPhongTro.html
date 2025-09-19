@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thêm phòng trọ - Quản lý phòng trọ</title>
+  <style>
+    /* Reset cơ bản */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: #2d3e50;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 35px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      width: 100%;
+      max-width: 520px;
+      animation: fadeIn 0.5s ease-in-out;
+      position: relative;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 28px;
+      font-weight: 700;
+      font-size: 28px;
+      color: #2d3e50;
+      letter-spacing: 0.03em;
+    }
+
+    /* Nút Back */
+    .btn-back {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #2d3e50;
+      transition: color 0.3s ease, transform 0.3s ease;
+      user-select: none;
+    }
+    .btn-back:hover {
+      color: #4CAF50;
+      transform: scale(1.15);
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: 600;
+      color: #444;
+      font-size: 15px;
+      user-select: none;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1.8px solid #ccc;
+      outline: none;
+      font-size: 15px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      font-family: inherit;
+      color: #333;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.35);
+    }
+    textarea {
+      height: 100px;
+      resize: vertical;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    select {
+      cursor: pointer;
+    }
+
+    /* Hiển thị tên file đã chọn */
+    #fileNames {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #555;
+      min-height: 18px;
+      font-style: italic;
+    }
+
+    .actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .actions button {
+      padding: 14px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    .btn-submit {
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+    }
+    .btn-submit:hover {
+      background: #45a049;
+      box-shadow: 0 6px 16px rgba(69, 160, 73, 0.7);
+    }
+    .btn-cancel {
+      background: #e0e0e0;
+      color: #333;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+    .btn-cancel:hover {
+      background: #d5d5d5;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    /* Popup */
+    .popup {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0; 
+      top: 0; 
+      width: 100%; 
+      height: 100%; 
+      background-color: rgba(0,0,0,0.45);
+      animation: fadeIn 0.3s ease-in-out;
+      user-select: none;
+    }
+    .popup-content {
+      background: #fff;
+      margin: 12% auto;
+      padding: 28px 30px;
+      border-radius: 14px;
+      width: 360px;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      animation: scaleUp 0.3s ease-in-out;
+      font-size: 17px;
+      font-weight: 600;
+      color: #2d3e50;
+      user-select: text;
+    }
+    @keyframes scaleUp {
+      from {transform: scale(0.85);}
+      to {transform: scale(1);}
+    }
+    .popup-content.success {
+      border-top: 6px solid #4CAF50;
+      color: #2e7d32;
+    }
+    .popup-content.error {
+      border-top: 6px solid #f44336;
+      color: #c62828;
+    }
+    .popup-content p {
+      margin: 20px 0 25px;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+    .close-btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #4CAF50;
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .close-btn:hover {
+      background: #45a049;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 30px 15px;
+      }
+      .container {
+        width: 100%;
+        padding: 25px 20px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      .actions button {
+        padding: 12px 22px;
+        font-size: 14px;
+        margin: 0 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="formTitle">
+    <!-- Nút Back -->
+    <button class="btn-back" id="btnBack" aria-label="Quay lại trang trước">←</button>
+
+    <h2 id="formTitle">Thêm phòng trọ</h2>
+    <form id="formPhongTro" novalidate>
+      <label for="maPhong">Mã phòng <span aria-hidden="true" style="color:#f44336;">*</span>:</label>
+      <input type="text" id="maPhong" name="maPhong" placeholder="Nhập mã phòng" required autocomplete="off" />
+
+      <label for="chuTro">Thông tin chủ:</label>
+      <input type="text" id="chuTro" name="chuTro" placeholder="Họ tên, SĐT, email" autocomplete="off" />
+
+      <label for="diaChi">Địa chỉ <span aria-hidden="true" style="color:#f44336;">*</span>:</label>
+      <input type="text" id="diaChi" name="diaChi" placeholder="Số nhà, đường, khu vực, quận/huyện" required autocomplete="off" />
+
+      <label for="giaPhong">Giá phòng (1 tháng) <span aria-hidden="true" style="color:#f44336;">*</span>:</label>
+      <input type="number" id="giaPhong" name="giaPhong" placeholder="Nhập giá phòng (VNĐ)" min="0" step="1000" required autocomplete="off" />
+
+      <label for="trangThai">Trạng thái:</label>
+      <select id="trangThai" name="trangThai" aria-label="Chọn trạng thái phòng">
+        <option value="con">Còn trống</option>
+        <option value="het">Hết phòng</option>
+      </select>
+
+      <label for="moTa">Mô tả phòng:</label>
+      <textarea id="moTa" name="moTa" placeholder="Nhập diện tích, tiện ích, điều kiện sử dụng"></textarea>
+
+      <label for="hinhAnh">Hình ảnh:</label>
+      <input type="file" id="hinhAnh" name="hinhAnh" multiple accept="image/*" aria-describedby="fileNames" />
+      <div id="fileNames" aria-live="polite" aria-atomic="true"></div>
+
+      <div class="actions">
+        <button type="button" id="btnDang" class="btn-submit" aria-label="Đăng phòng trọ">Đăng</button>
+        <button type="button" id="btnHuy" class="btn-cancel" aria-label="Hủy và làm mới form">Hủy</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Popup -->
+  <div id="popup" class="popup" role="alertdialog" aria-modal="true" aria-labelledby="popupMessage" tabindex="-1">
+    <div id="popupContent" class="popup-content">
+      <p id="popupMessage"></p>
+      <button class="close-btn" id="closePopup" aria-label="Đóng thông báo">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const btnDang = document.getElementById("btnDang");
+    const btnHuy = document.getElementById("btnHuy");
+    const btnBack = document.getElementById("btnBack");
+    const popup = document.getElementById("popup");
+    const popupMessage = document.getElementById("popupMessage");
+    const popupContent = document.getElementById("popupContent");
+    const closePopup = document.getElementById("closePopup");
+    const form = document.getElementById("formPhongTro");
+    const hinhAnhInput = document.getElementById("hinhAnh");
+    const fileNamesDiv = document.getElementById("fileNames");
+
+    // Hiển thị tên file đã chọn
+    hinhAnhInput.addEventListener("change", () => {
+      const files = hinhAnhInput.files;
+      if (files.length === 0) {
+        fileNamesDiv.textContent = "";
+        return;
+      }
+      const names = Array.from(files).map(f => f.name).join(", ");
+      fileNamesDiv.textContent = `Đã chọn: ${names}`;
+    });
+
+    // Hàm kiểm tra giá phòng hợp lệ (số dương)
+    function isValidPrice(value) {
+      const num = Number(value);
+      return !isNaN(num) && num >= 0;
+    }
+
+    btnDang.addEventListener("click", function() {
+      // Lấy giá trị và trim
+      let maPhong = form.maPhong.value.trim();
+      let diaChi = form.diaChi.value.trim();
+      let giaPhong = form.giaPhong.value.trim();
+
+      // Kiểm tra bắt buộc
+      if (maPhong === "" || diaChi === "" || giaPhong === "") {
+        popupMessage.textContent = "❌ Vui lòng nhập đầy đủ thông tin bắt buộc (Mã phòng, Địa chỉ, Giá phòng)!";
+        popupContent.className = "popup-content error";
+        showPopup();
+        return;
+      }
+
+      // Kiểm tra giá phòng hợp lệ
+      if (!isValidPrice(giaPhong)) {
+        popupMessage.textContent = "❌ Giá phòng phải là số hợp lệ và không âm!";
+        popupContent.className = "popup-content error";
+        showPopup();
+        return;
+      }
+
+      // Nếu hợp lệ
+      popupMessage.textContent = "✅ Đăng phòng thành công!";
+      popupContent.className = "popup-content success";
+      showPopup();
+
+      // Có thể thêm xử lý gửi form lên server ở đây
+    });
+
+    function showPopup() {
+      popup.style.display = "block";
+      popup.focus();
+    }
+
+    closePopup.addEventListener("click", function() {
+      popup.style.display = "none";
+      btnDang.focus();
+    });
+
+    // Đóng popup khi click ngoài nội dung popup
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        popup.style.display = "none";
+        btnDang.focus();
+      }
+    });
+
+    btnHuy.addEventListener("click", function() {
+      form.reset();
+      fileNamesDiv.textContent = "";
+      form.maPhong.focus();
+    });
+
+    // Nút back
+    btnBack.addEventListener("click", function() {
+      window.history.back();
+    });
+
+    // Tự động focus vào trường Mã phòng khi load trang
+    window.addEventListener("load", () => {
+      form.maPhong.focus();
+    });
+  </script>
+</body>
+</html>
