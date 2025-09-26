@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binhluan&Danhgia</title>
+
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --card: #fff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #4caf50;
+      --radius: 12px;
+      --accent: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #b99f72;
+      color: #111;
+    }
+
+    .back {
+      all: unset;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    /* Layout */
+    .wrap {
+      max-width: 960px;
+      margin: 16px auto;
+      padding: 0 16px;
+    }
+
+    .room {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 12px 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      margin: 8px 0 18px;
+    }
+
+    .tabs a {
+      color: #111;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .tabs a.active {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    /* Đánh giá */
+    .rating {
+      display: inline-flex;
+      flex-direction: row-reverse;
+      gap: 6px;
+      border: 0;
+      padding: 0;
+      margin: 0 0 6px;
+    }
+
+    .rating input {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .rating label {
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      color: #cfd3d8;
+      padding: 2px;
+    }
+
+    .rating label:hover,
+    .rating label:hover ~ label {
+      color: #FFC107;
+    }
+
+    .rating input:checked + label,
+    .rating input:checked ~ label {
+      color: #FFC107;
+    }
+
+    .input-box {
+      background: #f6f6f6;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 16px;
+      margin-top: 8px;
+    }
+
+    .label {
+      margin: 8px 0 12px;
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      border: none;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      background: var(--primary);
+      color: #0a3;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    /* Danh sách xem phòng */
+    .list-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .appt {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .appt .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #e0e7ff;
+    }
+
+    .tag.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #d1fae5;
+    }
+
+    .tag.warn {
+      background: #fff7ed;
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Chi tiết */
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+      margin: 6px 0 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .mini-gallery {
+      display: flex;
+      gap: 8px;
+      overflow: auto;
+      padding: 6px 0;
+    }
+
+    .mini-gallery img {
+      width: 120px;
+      height: 86px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #eee;
+    }
+
+    @media (max-width: 640px) {
+      .tabs {
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="back" aria-label="Quay lại">←</button>
+    <div>Bình luận và đánh giá</div>
+  </div>
+
+  <div class="wrap">
+    <!-- Tiêu đề phòng -->
+    <div class="room">Phòng trọ A - Đường Hàm Nghi , Đà Nẵng</div>
+
+    <!-- Tabs -->
+    <nav class="tabs" aria-label="Tabs">
+      <a href="#" data-tab="details">Chi tiết</a>
+      <a href="#" class="active" data-tab="reviews">Đánh giá &amp; Bình luận</a>
+      <a href="#" data-tab="watchlist">Danh sách xem phòng</a>
+    </nav>
+
+    <!-- Đánh giá -->
+    <section id="tab-reviews" class="card">
+      <fieldset class="rating" aria-label="Chọn số sao">
+        <input type="radio" id="s5" name="rating" value="5" />
+        <label for="s5" title="5 sao">★</label>
+
+        <input type="radio" id="s4" name="rating" value="4" checked />
+        <label for="s4" title="4 sao">★</label>
+
+        <input type="radio" id="s3" name="rating" value="3" />
+        <label for="s3" title="3 sao">★</label>
+
+        <input type="radio" id="s2" name="rating" value="2" />
+        <label for="s2" title="2 sao">★</label>
+
+        <input type="radio" id="s1" name="rating" value="1" />
+        <label for="s1" title="1 sao">★</label>
+      </fieldset>
+
+      <div class="input-box">
+        <div class="label">Chọn số sao</div>
+        <textarea id="reviewText" placeholder="Hãy chia sẻ trải nghiệm của bạn"></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="btnSend" class="btn" type="button">Gửi đánh giá</button>
+      </div>
+    </section>
+
+    <!-- Danh sách xem phòng -->
+    <section id="tab-watchlist" class="card hidden" aria-live="polite">
+      <div class="list-wrap" id="apptList"></div>
+    </section>
+
+    <!-- Chi tiết -->
+    <section id="tab-details" class="card hidden">
+      <div id="detailWrap"><!-- JS render vào đây --></div>
+    </section>
+  </div>
+
+  <script>
+    /* ================== DEMO DATA ================== */
+    const APPOINTMENTS = [
+      { id: 101, time: 'Th 6, 20/09/2025 • 17:30', name: 'Nguyễn Minh Tâm', phone: '0901 234 567', note: 'Đi xem sau giờ làm', status: 'Đã xác nhận' },
+      { id: 102, time: 'Th 7, 21/09/2025 • 09:00', name: 'Trần Hồng Ân',   phone: '0933 888 222', note: 'Đi cùng 1 bạn',     status: 'Chờ xác nhận' },
+      { id: 103, time: 'CN, 22/09/2025 • 14:00',    name: 'Lê Tuấn',        phone: '0987 654 321', note: '',                 status: 'Đã xem' }
+    ];
+
+    const ROOM = {
+      title: 'Phòng trọ A - Đường Hàm Nghi , Đà Nẵng',
+      price_vnd: 3500000,
+      address: '77 Hàm Nghi, Đà Nẵng',
+      size_m2: 26,
+      available: true,
+      description: 'Phòng rộng rãi, thoáng mát, có ban công nhỏ. Khu yên tĩnh, giờ giấc linh hoạt.',
+      bullets: ['Lối đi riêng', 'Ưu tiên sinh viên/nhân viên', 'Gần trạm xe buýt', 'Cọc 1 tháng'],
+      photos: [
+        'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?q=80&w=800&auto=format&fit=crop'
+      ]
+    };
+
+    /* ================== HELPERS ================== */
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    const money = v => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(v);
+
+    /* ================== RENDERERS ================== */
+    function renderAppts(list) {
+      const wrap = $('#apptList');
+      wrap.innerHTML = '';
+
+      list.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'appt';
+
+        const tagClass =
+          a.status.includes('xác nhận') ? 'success' :
+          a.status.includes('Chờ') ? 'warn' : '';
+
+        card.innerHTML = `
+          <div class="row">
+            <strong>${a.time}</strong>
+            <span class="tag ${tagClass}">${a.status}</span>
+          </div>
+          <div class="row">
+            <div class="muted">Người đặt: <b>${a.name}</b> • ${a.phone}</div>
+            <div class="muted">Mã lịch: #${a.id}</div>
+          </div>
+          <div class="muted">${a.note ? ('Ghi chú: ' + a.note) : '—'}</div>
+        `;
+
+        wrap.appendChild(card);
+      });
+    }
+
+    function renderDetails(room) {
+      const wrap = $('#detailWrap');
+      wrap.innerHTML = `
+        <h3 style="margin:0 0 8px">${room.title}</h3>
+
+        <div class="meta">
+          <span class="chip">Giá: <b>${money(room.price_vnd)}/tháng</b></span>
+          <span class="chip">Diện tích: <b>${room.size_m2} m²</b></span>
+          <span class="chip">Tình trạng: <b>${room.available ? 'Đang trống' : 'Hết phòng'}</b></span>
+        </div>
+
+        <div class="muted" style="margin:6px 0 12px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          ${room.address}
+        </div>
+
+        <p style="margin:8px 0 12px; line-height:1.6">${room.description}</p>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 10px">
+          ${room.bullets.map(b => `<span class="chip">${b}</span>`).join('')}
+        </div>
+
+        <div class="mini-gallery">
+          ${room.photos.map(src => `<img src="${src}" alt="Ảnh phòng" />`).join('')}
+        </div>
+      `;
+    }
+
+    /* ================== TABS ================== */
+    function switchTab(which) {
+      // active tab
+      $$('.tabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === which));
+
+      // show/hide sections
+      $('#tab-reviews').classList.toggle('hidden', which !== 'reviews');
+      $('#tab-watchlist').classList.toggle('hidden', which !== 'watchlist');
+      $('#tab-details').classList.toggle('hidden', which !== 'details');
+
+      // lazy render
+      if (which === 'watchlist') renderAppts(APPOINTMENTS);
+      if (which === 'details')   renderDetails(ROOM);
+    }
+
+    /* ================== EVENTS ================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      // Tabs
+      $$('.tabs a').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchTab(a.dataset.tab);
+        });
+      });
+
+      // Gửi đánh giá
+      $('#btnSend').addEventListener('click', () => {
+        const stars = (document.querySelector('input[name="rating"]:checked') || {}).value;
+        const note  = ($('#reviewText').value || '').trim();
+        if (!stars) {
+          alert('Vui lòng chọn số sao.');
+          return;
+        }
+        alert(`Đã gửi đánh giá ${stars} sao.\nNội dung: ${note || '(không có nội dung)'}`);
+        $('#reviewText').value = '';
+      });
+
+      // Back
+      $('.back')?.addEventListener('click', () => history.back());
+    });
+  </script>
+</body>
+</html>
